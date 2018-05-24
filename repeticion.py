@@ -6,6 +6,8 @@ import RPi.GPIO as GPIO
 import subprocess
 import threading
 import time
+import pygame.mixer
+import random
 
 
 # VIDEO BUFFER PARAMETERS
@@ -26,6 +28,28 @@ def interruption (channel):
         ball = 1
 
 GPIO.add_event_detect(23, GPIO.RISING, callback = interruption)
+
+
+# REPRODUCE AUDIO
+def reproducir_audio()
+        num=random.randrange(4)
+
+        switcher1 = {
+                0: pygame.mixer.Sound("1.wav"),
+                1: pygame.mixer.Sound("2.wav"),
+                2: pygame.mixer.Sound("3.wav"),
+                3: pygame.mixer.Sound("4.wav")
+        }
+        switcher2 = {
+                0: 7,
+                1: 5,
+                2: 3,
+                3: 4
+        }
+        sonido = switcher1.get(num,pygame.mixer.Sound("4.wav"))
+        dormir = switcher2.get(num)
+        sonido.play()
+        sleep(dormir)
 
 
 # SHOW REPETITION
@@ -61,6 +85,10 @@ with picamera.PiCamera() as camera:
         stream = picamera.PiCameraCircularIO(camera, seconds=VIDEO_BEFORE)
         camera.start_recording(stream, format='h264')
 
+        # AUDIO INITIALICE
+        pygame.mixer.init(44100, 16, 2, 4096)
+
+
         
 
         try:
@@ -73,11 +101,13 @@ with picamera.PiCamera() as camera:
                                 print("Ball detected...")
                                 # THREADS DEFINITIONS
                                 repeticion = threading.Thread(target=mostrar_video)
+                                audio = threading.Thread(target=reproducir_audio)
 
 
  
                                # THREADS EJECUTION
                                 repeticion.start()
+                                audio.start()
 
                                 #ESPERAMOS PARA VOLVER A DETECTAR
                                 time.sleep(2)

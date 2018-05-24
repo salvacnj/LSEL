@@ -32,6 +32,7 @@ GPIO.add_event_detect(23, GPIO.RISING, callback = interruption)
 
 # REPRODUCE AUDIO
 def reproducir_audio():
+        print("[STATE]: REPRODUCIENDO AUDIO")
         num=random.randrange(4)
 
         switcher1 = {

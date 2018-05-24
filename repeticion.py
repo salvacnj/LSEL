@@ -31,7 +31,7 @@ GPIO.add_event_detect(23, GPIO.RISING, callback = interruption)
 
 
 # REPRODUCE AUDIO
-def reproducir_audio()
+def reproducir_audio():
         num=random.randrange(4)
 
         switcher1 = {
@@ -49,7 +49,7 @@ def reproducir_audio()
         sonido = switcher1.get(num,pygame.mixer.Sound("4.wav"))
         dormir = switcher2.get(num)
         sonido.play()
-        sleep(dormir)
+        time.sleep(dormir)
 
 
 # SHOW REPETITION

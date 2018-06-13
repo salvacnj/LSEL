@@ -53,6 +53,8 @@ def initial_mesaje():
     marcador_1 = 0
     marcador_2 = 0
 
+    audio_c = threading.Thread(target=reproducir_comienzo)
+    audio_c.start()
 
     subprocess.call(["clear"])
     print("--------------------------------------------------------")
@@ -104,6 +106,26 @@ GPIO.add_event_detect(23, GPIO.RISING, callback = interruption)
 
 
 
+def reproducir_comienzo():
+    print("[STATE]: REPRODUCIENDO AUDIO COMIENZO")
+    num=random.randrange(2)
+
+    switcher1 = {
+            0: pygame.mixer.Sound("Comienzo1.wav"),
+            1: pygame.mixer.Sound("comienzo2.wav")
+    }
+    switcher2 = {
+            0: 9,
+            1: 8
+    }
+
+    sonido = switcher1.get(num,pygame.mixer.Sound("Comienzo1.wav"))
+    dormir = switcher2.get(num)
+    sonido.play()
+    time.sleep(dormir)
+
+
+
 def reproducir_final():
     print("FINAL MATCH")
 
@@ -111,19 +133,53 @@ def reproducir_final():
 # AUDIO REPRODUCTION FOR GOAL
 def reproducir_audio():
         print("[STATE]: REPRODUCIENDO AUDIO")
-        num=random.randrange(4)
+        num=random.randrange(20)
 
         switcher1 = {
                 0: pygame.mixer.Sound("1.wav"),
                 1: pygame.mixer.Sound("2.wav"),
                 2: pygame.mixer.Sound("3.wav"),
-                3: pygame.mixer.Sound("4.wav")
+                3: pygame.mixer.Sound("4.wav"),
+                4: pygame.mixer.Sound("5.wav"),
+                5: pygame.mixer.Sound("6.wav"),
+                6: pygame.mixer.Sound("7.wav"),
+                7: pygame.mixer.Sound("8.wav"),
+                8: pygame.mixer.Sound("9.wav"),
+                9: pygame.mixer.Sound("10.wav"),
+                10: pygame.mixer.Sound("11.wav"),
+                11: pygame.mixer.Sound("12.wav"),
+                12: pygame.mixer.Sound("13.wav"),
+                13: pygame.mixer.Sound("14.wav"),
+                14: pygame.mixer.Sound("15.wav"),
+                15: pygame.mixer.Sound("16.wav"),
+                16: pygame.mixer.Sound("17.wav"),
+                17: pygame.mixer.Sound("18.wav"),
+                18: pygame.mixer.Sound("19.wav"),
+                19: pygame.mixer.Sound("20.wav"),
+                20: pygame.mixer.Sound("21.wav")
         }
         switcher2 = {
                 0: 7,
                 1: 5,
                 2: 3,
-                3: 4
+                3: 5,
+                4: 4,
+                5: 7,
+                6: 7,
+                7: 6,
+                8: 10,
+                9: 6,
+                10: 12,
+                11: 5,
+                12: 8,
+                13: 10,
+                14: 7,
+                15: 9,
+                16: 4,
+                17: 5,
+                18: 10,
+                19: 9,
+                20: 10
         }
         sonido = switcher1.get(num,pygame.mixer.Sound("4.wav"))
         dormir = switcher2.get(num)

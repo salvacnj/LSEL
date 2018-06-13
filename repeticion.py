@@ -12,7 +12,16 @@ import random
 
 # VIDEO BUFFER PARAMETERS
 VIDEO_BEFORE = 2 
-VIDEO_AFTER = 2
+VIDEO_AFTER = 1
+
+# PLAYERS SCORE
+docker_1 = 0
+docker_2 = 0
+marcador_1 = 0
+marcador_2 = 0
+
+# GAME SELECTION
+game_selected = 0
 
 # INTERRUP PIN CONFIGURATION
 GPIO.setmode(GPIO.BCM)
@@ -20,6 +29,46 @@ GPIO.setup(23,GPIO.IN)
 
 # BALL DETECTED VARIABLE
 ball = 0
+
+# VIENVENIDA MENSAJE
+def initial_mesaje():
+    print("--------------------------------------------------------")
+    print("                                                        ")
+    print("     |||      ||  |||||||||        ||||                 ")
+    print("     ||||     ||  ||||   |||     |||||||| ")
+    print("     || ||    ||  ||||   |||   ||||   |||| ")
+    print("     ||  ||   ||  |||||||||    ||||   |||| ")
+    print("     ||   ||  ||  |||||||||    ||||||||||| ")
+    print("     ||    || ||  ||||   |||   ||||   |||| ")
+    print("     ||     ||||  ||||   |||   ||||   |||| ")
+    print("     ||      |||  |||||||||    ||||   |||| ")
+    print("                                                        ")
+    print(" -- ----------------------------------------------------")
+    print("          SELECT THE NAME OF YOUR GAME                  ")
+    print("  1 ->  21 GAME:                                        ")
+    print("        The first player who achive 21 points wins      ")
+    print("                                                        ")
+    print("  2 ->  1 vs 1 SCORE:                                   ")
+    print("        Batlle beetween two player! There is no limits  ")
+    print("        score                                           ")
+    print("--------------------------------------------------------")
+    print("  MAKE YOUR CHOICE:                                     ")
+    game_selected = input()
+
+    while (game_selected != 1 and game_selected != 2):
+        print("--------------------------------------------------------")
+        print("  WRONG SLECTION, MAKE YOUR CHOICE AGAIN:               ")
+        game_selected = input()
+    
+
+    if game_selected == 1:
+        print("--------------------------------------------------------")
+        print("  21 GAME SELECTED, GOOD LUCK:                          ")
+    else: 
+        print("--------------------------------------------------------")
+        print("  1 vs 1 SELECTED, GOOD LUCK:                           ")
+
+
 
 
 # DETECTION OF RISING EVENT IN THE PIN
@@ -74,6 +123,14 @@ def write_video(stream):
                 with io.open('motion.h264','wb') as output:
                         output.write(stream.read())
 
+
+# UPDATE SCORE PLAYER 1/2 
+def actualiza_marcador(player, points):
+    if player == 1:
+        marcador_1 = marcador_1 + points
+    else:
+        marcador_2 = marcador_2 + points
+
 # MAIN LOPP
 with picamera.PiCamera() as camera:
 
@@ -89,11 +146,9 @@ with picamera.PiCamera() as camera:
         # AUDIO INITIALICE
         pygame.mixer.init(44100, 16, 2, 4096)
 
-
-        
+        initial_mesaje()      
 
         try:
-                print('[CAM-STATE]: Waiting BALL')
                 while True:
                         camera.wait_recording(1)
 
@@ -103,7 +158,6 @@ with picamera.PiCamera() as camera:
                                 # THREADS DEFINITIONS
                                 repeticion = threading.Thread(target=mostrar_video)
                                 audio = threading.Thread(target=reproducir_audio)
-
 
  
                                # THREADS EJECUTION
@@ -115,6 +169,7 @@ with picamera.PiCamera() as camera:
 
                                 ball = 0
                                 print('[CAM-STATE]: Waiting BALL')
+
 
                                 
 

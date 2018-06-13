@@ -257,23 +257,28 @@ with picamera.PiCamera() as camera:
 
                                 #leer player ID desde socket
                                 actualiza_marcador(player_id,2)
-                                print("POINT FOR PLAYER"+str(player_id))
+                                subprocess.call(["clear"])
+                                print("------------------------------------------------")
+                                print("    P1: "+str(marcador_1)+"   P2: "+str(marcador_2))
+                                print("------------------------------------------------")
+
+
+                                                                # SHOW REPETITIOM ALEATORY
+                                if random.randrange(10) > 6:
+                                    repeticion = threading.Thread(target=mostrar_video)
+                                    repeticion.start()
 
                                 # THREADS DEFINITIONS
-                                repeticion = threading.Thread(target=mostrar_video)
                                 audio = threading.Thread(target=reproducir_audio)
 
                                 # THREADS EJECUTION
-                                repeticion.start()
                                 audio.start()
 
                                 #ESPERAMOS PARA VOLVER A DETECTAR
                                 time.sleep(2)
 
                                 ball = 0
-                                print('[CAM-STATE]: Waiting BALL')  
-                                
-
+                            
                                                             
 
         finally:

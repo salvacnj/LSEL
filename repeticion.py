@@ -19,6 +19,9 @@ import sys
 VIDEO_BEFORE = 2 
 VIDEO_AFTER = 1
 
+# TIME BETWEEN POINTS
+TIME_BETWEEN_POINTS = 2
+
 # PLAYERS SCORE
 docker_1 = 0
 docker_2 = 0
@@ -72,13 +75,14 @@ def initial_mesaje():
     print("        Batlle beetween two player! There is no limits  ")
     print("        score                                           ")
     print("--------------------------------------------------------")
-    print("  MAKE YOUR CHOICE:                                     ")
-    game_selected = input()
+    game_selected = raw_input("  MAKE YOUR CHOICE: ")
+    game_selected = int(game_selected)
+    
 
     while (game_selected != 1 and game_selected != 2):
         print("--------------------------------------------------------")
-        print("  WRONG SLECTION, MAKE YOUR CHOICE AGAIN:               ")
-        game_selected = input()
+        game_selected = raw_input("  WRONG SLECTION, MAKE YOUR CHOICE AGAIN: ")
+        game_selected = int(game_selected)
     
 
     if game_selected == 1:
@@ -165,6 +169,7 @@ def actualiza_marcador(player, points):
 # MAIN LOPP
 with picamera.PiCamera() as camera:
 
+
         # TEXT TO SHOW IN THE REPETITION
         camera.annotate_text = "REPETICION"        
         camera.annotate_text_size = 160
@@ -177,109 +182,117 @@ with picamera.PiCamera() as camera:
         # AUDIO INITIALICE
         pygame.mixer.init(44100, 16, 2, 4096)
 
-        initial_mesaje()      
-
         try:
-                while True:
 
-                        camera.wait_recording(1)
+            while True:
 
-                        if ball == 1:
-                            if game_selected == 1:
+                reboot_script = 0
 
-                                #leer player ID desde socket
+                initial_mesaje()      
 
-                                actualiza_marcador(player_id,2)
+                
+                while reboot_script == 0:
+
+                    camera.wait_recording(1)
+
+                    if ball == 1:
+                        if game_selected == 1:
+
+                            #leer player ID desde socket
+
+                            actualiza_marcador(player_id,2)
+                            subprocess.call(["clear"])
+                            print("------------------------------------------------")
+                            print("    P1: "+str(marcador_1)+"   P2: "+str(marcador_2))
+                            print("------------------------------------------------")
+
+                            if (marcador_1 > 2):
                                 subprocess.call(["clear"])
+                                print("PLAYER 1 WINS!")
                                 print("------------------------------------------------")
                                 print("    P1: "+str(marcador_1)+"   P2: "+str(marcador_2))
                                 print("------------------------------------------------")
 
-                                if (marcador_1 > 21):
-                                    subprocess.call(["clear"])
-                                    print("PLAYER 1 WINS!")
-                                    print("------------------------------------------------")
-                                    print("    P1: "+str(marcador_1)+"   P2: "+str(marcador_2))
-                                    print("------------------------------------------------")
-
-                                    # WE SHOW LAST GOAL
-                                    repeticion = threading.Thread(target=mostrar_video)
-                                    audio_f = threading.Thread(target=reproducir_final)
-                                    repeticion.start()
-                                    audio_f.start()
-                                    time.sleep(5)
-                                    # REINICIAR SCRIPT
-                                    
-
-
-                                elif (marcador_2 >21):
-                                    subprocess.call(["clear"])
-                                    print("PLAYER 2 WINS!")
-                                    print("------------------------------------------------")
-                                    print("    P1: "+str(marcador_1)+"   P2: "+str(marcador_2))
-                                    print("------------------------------------------------")
-
-                                    # WE SHOW LAST GOAL
-                                    repeticion = threading.Thread(target=mostrar_video)
-                                    audio_f = threading.Thread(target=reproducir_final)
-                                    repeticion.start()
-                                    audio_f.start()
-                                    initial_mesaje()
-                                    time.sleep(5)
-                                    os.execl('/home/pi/VIDEO_SALVA/LSEL/repeticion.py',[''])
-
-                                # SHOW REPETITIOM ALEATORY
-                                if random.randrange(10) > 6:
-                                    repeticion = threading.Thread(target=mostrar_video)
-                                    repeticion.start()
-
-
-                                # THREADS DEFINITIONS
-                                audio = threading.Thread(target=reproducir_audio)
-
-                                # THREADS EJECUTION 
-                                audio.start()
-
-                                subprocess.call(["clear"])
-                                print("------------------------------------------------")
-                                print("    P1: "+str(marcador_1)+"   P2: "+str(marcador_2))
-                                print("------------------------------------------------")
-
-                                #ESPERAMOS PARA VOLVER A DETECTAR
-                                time.sleep(2)
-
-                                ball = 0
-                                             
-
-
+                                # WE SHOW LAST GOAL
+                                repeticion = threading.Thread(target=mostrar_video)
+                                audio_f = threading.Thread(target=reproducir_final)
+                                repeticion.start()
+                                audio_f.start()
+                                time.sleep(5)
+                                reboot_script = 1
+                                break
                                 
-                            elif game_selected == 2:
 
-                                #leer player ID desde socket
-                                actualiza_marcador(player_id,2)
+
+                            elif (marcador_2 >21):
                                 subprocess.call(["clear"])
+                                print("PLAYER 2 WINS!")
                                 print("------------------------------------------------")
                                 print("    P1: "+str(marcador_1)+"   P2: "+str(marcador_2))
                                 print("------------------------------------------------")
 
+                                # WE SHOW LAST GOAL
+                                repeticion = threading.Thread(target=mostrar_video)
+                                audio_f = threading.Thread(target=reproducir_final)
+                                repeticion.start()
+                                audio_f.start()
+                                initial_mesaje()
+                                time.sleep(5)
+                                reboot_script = 1
+                                break
 
-                                                                # SHOW REPETITIOM ALEATORY
-                                if random.randrange(10) > 6:
-                                    repeticion = threading.Thread(target=mostrar_video)
-                                    repeticion.start()
+                            # SHOW REPETITIOM ALEATORY
+                            if random.randrange(10) > 6:
+                                repeticion = threading.Thread(target=mostrar_video)
+                                repeticion.start()
 
-                                # THREADS DEFINITIONS
-                                audio = threading.Thread(target=reproducir_audio)
 
-                                # THREADS EJECUTION
-                                audio.start()
+                            # THREADS DEFINITIONS
+                            audio = threading.Thread(target=reproducir_audio)
 
-                                #ESPERAMOS PARA VOLVER A DETECTAR
-                                time.sleep(2)
+                            # THREADS EJECUTION 
+                            audio.start()
 
-                                ball = 0
+                            subprocess.call(["clear"])
+                            print("------------------------------------------------")
+                            print("    P1: "+str(marcador_1)+"   P2: "+str(marcador_2))
+                            print("------------------------------------------------")
+
+                            #ESPERAMOS PARA VOLVER A DETECTAR
+                            time.sleep(TIME_BETWEEN_POINTS)
+
+                            ball = 0
+                                         
+
+
                             
-                                                            
+                        elif game_selected == 2:
+
+                            #leer player ID desde socket
+                            actualiza_marcador(player_id,2)
+                            subprocess.call(["clear"])
+                            print("------------------------------------------------")
+                            print("    P1: "+str(marcador_1)+"   P2: "+str(marcador_2))
+                            print("------------------------------------------------")
+
+
+                                                            # SHOW REPETITIOM ALEATORY
+                            if random.randrange(10) > 6:
+                                repeticion = threading.Thread(target=mostrar_video)
+                                repeticion.start()
+
+                            # THREADS DEFINITIONS
+                            audio = threading.Thread(target=reproducir_audio)
+
+                            # THREADS EJECUTION
+                            audio.start()
+
+                            #ESPERAMOS PARA VOLVER A DETECTAR
+                            time.sleep(TIME_BETWEEN_POINTS)
+
+                            ball = 0
+                                
+                                                                    
 
         finally:
                 camera.stop_recording()

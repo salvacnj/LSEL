@@ -23,8 +23,6 @@ VIDEO_AFTER = 1
 TIME_BETWEEN_POINTS = 2
 
 # PLAYERS SCORE
-docker_1 = 0
-docker_2 = 0
 marcador_1 = 0
 marcador_2 = 0
 
@@ -77,14 +75,14 @@ def initial_mesaje():
     print("        Batlle beetween two player! There is no limits  ")
     print("        score                                           ")
     print("--------------------------------------------------------")
-    game_selected = raw_input("  MAKE YOUR CHOICE: ")
-    game_selected = int(game_selected)
+    print("  MAKE YOUR CHOICE: ")
+    game_selected = input()
     
 
     while (game_selected != 1 and game_selected != 2):
         print("--------------------------------------------------------")
-        game_selected = raw_input("  WRONG SLECTION, MAKE YOUR CHOICE AGAIN: ")
-        game_selected = int(game_selected)
+        print("  WRONG SLECTION, MAKE YOUR CHOICE AGAIN: ")
+        game_selected = input()
     
 
     if game_selected == 1:
@@ -274,7 +272,7 @@ with picamera.PiCamera() as camera:
                                 audio_f = threading.Thread(target=reproducir_final)
                                 repeticion.start()
                                 audio_f.start()
-                                time.sleep(5)
+                                time.sleep(15)
                                 reboot_script = 1
                                 break
                                 
@@ -293,7 +291,7 @@ with picamera.PiCamera() as camera:
                                 repeticion.start()
                                 audio_f.start()
                                 initial_mesaje()
-                                time.sleep(5)
+                                time.sleep(15)
                                 reboot_script = 1
                                 break
 

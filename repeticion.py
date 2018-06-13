@@ -32,6 +32,8 @@ ball = 0
 
 # VIENVENIDA MENSAJE
 def initial_mesaje():
+    global game_selected
+
     print("--------------------------------------------------------")
     print("                                                        ")
     print("     |||      ||  |||||||||        ||||                 ")
@@ -64,7 +66,7 @@ def initial_mesaje():
     if game_selected == 1:
         print("--------------------------------------------------------")
         print("  21 GAME SELECTED, GOOD LUCK:                          ")
-    else: 
+    elif game_selected == 2: 
         print("--------------------------------------------------------")
         print("  1 vs 1 SELECTED, GOOD LUCK:                           ")
 
@@ -150,17 +152,18 @@ with picamera.PiCamera() as camera:
 
         try:
                 while True:
+
                         camera.wait_recording(1)
 
                         if ball == 1:
+                            if game_selected == 1:
+                                print("Ball detected 1...")
 
-                                print("Ball detected...")
                                 # THREADS DEFINITIONS
                                 repeticion = threading.Thread(target=mostrar_video)
                                 audio = threading.Thread(target=reproducir_audio)
 
- 
-                               # THREADS EJECUTION
+                                # THREADS EJECUTION
                                 repeticion.start()
                                 audio.start()
 
@@ -168,10 +171,29 @@ with picamera.PiCamera() as camera:
                                 time.sleep(2)
 
                                 ball = 0
-                                print('[CAM-STATE]: Waiting BALL')
+                                print('[CAM-STATE]: Waiting BALL')             
 
 
                                 
+                            elif game_selected == 2:
+                                print("Ball detected 2...")
+
+                                # THREADS DEFINITIONS
+                                repeticion = threading.Thread(target=mostrar_video)
+                                audio = threading.Thread(target=reproducir_audio)
+
+                                # THREADS EJECUTION
+                                repeticion.start()
+                                audio.start()
+
+                                #ESPERAMOS PARA VOLVER A DETECTAR
+                                time.sleep(2)
+
+                                ball = 0
+                                print('[CAM-STATE]: Waiting BALL')  
+                                
+
+                                                            
 
         finally:
                 camera.stop_recording()

@@ -13,6 +13,23 @@ import pygame
 import random
 import os
 import sys
+from sense_hat import SenseHat
+
+
+# SENSE HAT
+OFFSET_LEFT = 1
+OFFSET_TOP = 2
+
+NUMS =[1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,  # 0
+       0,1,0,0,1,0,0,1,0,0,1,0,0,1,0,  # 1
+       1,1,1,0,0,1,0,1,0,1,0,0,1,1,1,  # 2
+       1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,  # 3
+       1,0,0,1,0,1,1,1,1,0,0,1,0,0,1,  # 4
+       1,1,1,1,0,0,1,1,1,0,0,1,1,1,1,  # 5
+       1,1,1,1,0,0,1,1,1,1,0,1,1,1,1,  # 6
+       1,1,1,0,0,1,0,1,0,1,0,0,1,0,0,  # 7
+       1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,  # 8
+       1,1,1,1,0,1,1,1,1,0,0,1,0,0,1]  # 9
 
 
 # VIDEO BUFFER PARAMETERS
@@ -34,13 +51,42 @@ player_id = 1
 
 # INTERRUP PIN CONFIGURATION
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(23,GPIO.IN)
+GPIO.setup(26, GPIO.IN)
 
 
 # BALL DETECTED VARIABLE
 ball = 0
 
 
+
+# Displays a single digit (0-9)
+def show_digit(val, xd, yd, r, g, b):
+  offset = val * 15
+  for p in range(offset, offset + 15):
+    xt = p % 3
+    yt = (p-offset) // 3
+    sense.set_pixel(xt+xd, yt+yd, r*NUMS[p], g*NUMS[p], b*NUMS[p])
+
+# Displays a two-digits positive number (0-99)
+def show_number(val, r, g, b):
+  abs_val = abs(val)
+  tens = abs_val // 10
+  units = abs_val % 10
+  if (abs_val > 9): show_digit(tens, OFFSET_LEFT, OFFSET_TOP, r, g, b)
+  show_digit(units, OFFSET_LEFT+4, OFFSET_TOP, r, g, b)
+
+
+# PRINT THE SCORE STATUS
+def print_marcador():
+    subprocess.call(["clear"])
+    print("------------------------------------------------")
+    print("                  SCORE                         ")
+    print("------------------------------------------------")
+    print("    P1: "+str(marcador_1)+"   P2: "+str(marcador_2))
+    print("------------------------------------------------")
+
+    sense.clear()
+    show_number(marcador_1, 200, 0, 60)
 
 # VIENVENIDA MENSAJE
 def initial_mesaje():
@@ -51,8 +97,7 @@ def initial_mesaje():
     marcador_1 = 0
     marcador_2 = 0
 
-    audio_c = threading.Thread(target=reproducir_comienzo)
-    audio_c.start()
+
 
     subprocess.call(["clear"])
     print("--------------------------------------------------------")
@@ -92,6 +137,12 @@ def initial_mesaje():
         print("--------------------------------------------------------")
         print("  1 vs 1 SELECTED, GOOD LUCK:                           ")
 
+    audio_c = threading.Thread(target=reproducir_comienzo)
+    audio_c.start()
+    time.sleep(9)
+    print_marcador()
+
+
 
 
 
@@ -100,12 +151,12 @@ def interruption (channel):
         global ball
         ball = 1
 
-GPIO.add_event_detect(23, GPIO.RISING, callback = interruption)
+GPIO.add_event_detect(26, GPIO.RISING, callback = interruption)
+
 
 
 
 def reproducir_comienzo():
-    print("[STATE]: REPRODUCIENDO AUDIO COMIENZO")
     num=random.randrange(2)
 
     switcher1 = {
@@ -130,7 +181,6 @@ def reproducir_final():
 
 # AUDIO REPRODUCTION FOR GOAL
 def reproducir_audio():
-        print("[STATE]: REPRODUCIENDO AUDIO")
         num=random.randrange(20)
 
         switcher1 = {
@@ -189,12 +239,10 @@ def reproducir_audio():
 def mostrar_video():
         camera.wait_recording(VIDEO_AFTER)
         write_video(stream)
-        print('[CAM-STATE]: SHOWING VIDEO')
-        print("[STATE]: MOSTRANDO REPETICION")
         subprocess.call(["rm","motion.mp4"])
         subprocess.call(["MP4Box","-fps","30","-add","motion.h264","motion.mp4"])
         subprocess.call(["omxplayer","motion.mp4"])
-        print("[STATE]: REPETICION MOSTRADA")
+
 
 # MODIFY BUFFER TO ADD
 def write_video(stream):
@@ -217,6 +265,9 @@ def actualiza_marcador(player, points):
     else:
         marcador_2 = marcador_2 + points
 
+ 
+
+
 
 
 
@@ -238,6 +289,10 @@ with picamera.PiCamera() as camera:
         # AUDIO INITIALICE
         pygame.mixer.init()
 
+        # SENSE HAT INIT
+        sense = SenseHat()
+        sense.clear()
+
         try:
 
             while True:
@@ -257,17 +312,11 @@ with picamera.PiCamera() as camera:
                             #leer player ID desde socket
 
                             actualiza_marcador(player_id,2)
-                            subprocess.call(["clear"])
-                            print("------------------------------------------------")
-                            print("    P1: "+str(marcador_1)+"   P2: "+str(marcador_2))
-                            print("------------------------------------------------")
+                            print_marcador()
 
                             if (marcador_1 > 2):
-                                subprocess.call(["clear"])
-                                print("PLAYER 1 WINS!")
-                                print("------------------------------------------------")
-                                print("    P1: "+str(marcador_1)+"   P2: "+str(marcador_2))
-                                print("------------------------------------------------")
+                                print_marcador()
+                                print("CONGRATULATIONS!!! -> PLAYER 1 WINS !!")
 
                                 # WE SHOW LAST GOAL
                                 repeticion = threading.Thread(target=mostrar_video)
@@ -281,11 +330,8 @@ with picamera.PiCamera() as camera:
 
 
                             elif (marcador_2 >21):
-                                subprocess.call(["clear"])
-                                print("PLAYER 2 WINS!")
-                                print("------------------------------------------------")
-                                print("    P1: "+str(marcador_1)+"   P2: "+str(marcador_2))
-                                print("------------------------------------------------")
+                                print_marcador()
+                                print("CONGRATULATIONS!!! -> PLAYER 2 WINS !!")
 
                                 # WE SHOW LAST GOAL
                                 repeticion = threading.Thread(target=mostrar_video)
@@ -309,10 +355,8 @@ with picamera.PiCamera() as camera:
                             # THREADS EJECUTION 
                             audio.start()
 
-                            subprocess.call(["clear"])
-                            print("------------------------------------------------")
-                            print("    P1: "+str(marcador_1)+"   P2: "+str(marcador_2))
-                            print("------------------------------------------------")
+                            # SHOW SCORE
+                            print_marcador()
 
                             #ESPERAMOS PARA VOLVER A DETECTAR
                             time.sleep(TIME_BETWEEN_POINTS)
@@ -327,12 +371,10 @@ with picamera.PiCamera() as camera:
                             #leer player ID desde socket
                             actualiza_marcador(player_id,2)
                             subprocess.call(["clear"])
-                            print("------------------------------------------------")
-                            print("    P1: "+str(marcador_1)+"   P2: "+str(marcador_2))
-                            print("------------------------------------------------")
+                            print_marcador()
 
 
-                                                            # SHOW REPETITIOM ALEATORY
+                            # SHOW REPETITIOM ALEATORY
                             if random.randrange(10) > 6:
                                 repeticion = threading.Thread(target=mostrar_video)
                                 repeticion.start()

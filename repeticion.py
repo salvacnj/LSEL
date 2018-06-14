@@ -98,7 +98,7 @@ def chispas():
   activo = 1
 
   while activo:
-    if contador < 200:
+    if contador < 140:
       contador = contador +1
       x = random.randint(0, 7)
       y = random.randint(0, 7)
@@ -455,3 +455,4 @@ with picamera.PiCamera() as camera:
                 camera.stop_recording()
                 pygame.quit()
                 sense.clear()
+                sys.exit(1)

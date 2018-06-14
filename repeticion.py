@@ -9,14 +9,14 @@ import RPi.GPIO as GPIO
 import subprocess
 import threading
 import time
-import pygame.mixer
+import pygame
 import random
 import os
 import sys
 
 
 # VIDEO BUFFER PARAMETERS
-VIDEO_BEFORE = 2 
+VIDEO_BEFORE = 3 
 VIDEO_AFTER = 1
 
 # TIME BETWEEN POINTS
@@ -220,6 +220,8 @@ def actualiza_marcador(player, points):
 
 
 
+
+
 # MAIN LOPP
 with picamera.PiCamera() as camera:
 
@@ -234,7 +236,7 @@ with picamera.PiCamera() as camera:
         camera.start_recording(stream, format='h264')
 
         # AUDIO INITIALICE
-        pygame.mixer.init(44100, 16, 2, 4096)
+        pygame.mixer.init()
 
         try:
 

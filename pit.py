@@ -32,14 +32,30 @@ def show_number(val, r, g, b):
   show_digit(units, OFFSET_LEFT+4, OFFSET_TOP, r, g, b)
 
 
+def chispas(on):
+
+  sense.show_message("SMART-CANASTA")  
+  
+  while on:
+    x = random.randint(0, 7)
+    y = random.randint(0, 7)
+    r = random.randint(0, 255)
+    g = random.randint(0, 255)
+    b = random.randint(0, 255)
+    sense.set_pixel(x, y, r, g, b)
+    time.sleep(0.01)
+
+
+
 ################################################################################
 # MAIN
 
 sense = SenseHat()
 sense.clear()
 
-for i in range(0, 100):
-  show_number(i, 200, 0, 60)
-  time.sleep(0.2)
+chispas()
+#for i in range(0, 100):
+#  show_number(i, 200, 0, 60)
+#  time.sleep(0.2)
 
 sense.clear()

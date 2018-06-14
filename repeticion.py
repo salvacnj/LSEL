@@ -57,6 +57,9 @@ GPIO.setup(26, GPIO.IN)
 # BALL DETECTED VARIABLE
 ball = 0
 
+# CHISPAS ON
+chispas_on = 0
+
 
 
 # Displays a single digit (0-9)
@@ -88,17 +91,41 @@ def print_marcador():
     sense.clear()
     show_number(marcador_1, 200, 0, 60)
 
+
+def chispas():
+  sense.show_message("SMART-CANASTA")
+  contador = 0
+  activo = 1
+
+  while activo:
+    if contador < 200:
+      contador = contador +1
+      x = random.randint(0, 7)
+      y = random.randint(0, 7)
+      r = random.randint(0, 255)
+      g = random.randint(0, 255)
+      b = random.randint(0, 255)
+      sense.set_pixel(x, y, r, g, b)
+      time.sleep(0.01)
+    else:
+      activo=0
+
+
 # VIENVENIDA MENSAJE
 def initial_mesaje():
     global game_selected
     global marcador_1
     global marcador_2
 
+
     marcador_1 = 0
     marcador_2 = 0
 
 
+    chispas_process = threading.Thread(target=chispas)
+    chispas_process.start()
 
+    
     subprocess.call(["clear"])
     print("--------------------------------------------------------")
     print("                                                        ")
@@ -173,6 +200,35 @@ def reproducir_comienzo():
     sonido.play()
     time.sleep(dormir)
 
+
+def reproducir_fondo():
+    print("REPRODUCTION")
+
+    while True:
+        pygame.mixer.music.load("fondo_1.wav")
+        pygame.mixer.music.set_volume(0.05)
+        pygame.mixer.music.play()
+        time.sleep(190)
+
+        pygame.mixer.music.load("fondo_2.wav")
+        pygame.mixer.music.set_volume(0.05)
+        pygame.mixer.music.play()
+        time.sleep(245)
+
+        pygame.mixer.music.load("fondo_3.wav")
+        pygame.mixer.music.set_volume(0.05)
+        pygame.mixer.music.play()
+        time.sleep(220)
+
+        pygame.mixer.music.load("fondo_4.wav")
+        pygame.mixer.music.set_volume(0.05)
+        pygame.mixer.music.play()
+        time.sleep(290)
+
+        pygame.mixer.music.load("fondo_5.wav")
+        pygame.mixer.music.set_volume(0.05)
+        pygame.mixer.music.play()
+        time.sleep(390)
 
 
 def reproducir_final():
@@ -293,6 +349,9 @@ with picamera.PiCamera() as camera:
         sense = SenseHat()
         sense.clear()
 
+        audio_fondo = threading.Thread(target=reproducir_fondo)
+        audio_fondo.start()
+
         try:
 
             while True:
@@ -394,3 +453,5 @@ with picamera.PiCamera() as camera:
 
         finally:
                 camera.stop_recording()
+                pygame.quit()
+                sense.clear()

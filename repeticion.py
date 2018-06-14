@@ -314,7 +314,7 @@ with picamera.PiCamera() as camera:
                             actualiza_marcador(player_id,2)
                             print_marcador()
 
-                            if (marcador_1 > 2):
+                            if (marcador_1 > 21):
                                 print_marcador()
                                 print("CONGRATULATIONS!!! -> PLAYER 1 WINS !!")
 

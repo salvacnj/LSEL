@@ -51,7 +51,7 @@ player_id = 1
 
 # INTERRUP PIN CONFIGURATION
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(26, GPIO.IN)
+GPIO.setup(26, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 
 # BALL DETECTED VARIABLE
@@ -93,12 +93,12 @@ def print_marcador():
 
 
 def chispas():
-  sense.show_message("SMART-CANASTA")
+  sense.show_message("I-ANASTA")
   contador = 0
   activo = 1
 
   while activo:
-    if contador < 140:
+    if contador < 100:
       contador = contador +1
       x = random.randint(0, 7)
       y = random.randint(0, 7)
@@ -109,6 +109,11 @@ def chispas():
       time.sleep(0.01)
     else:
       activo=0
+      sense.show_message("SELECT GAME")
+      sense.clear()
+
+    
+
 
 
 # VIENVENIDA MENSAJE
@@ -155,6 +160,7 @@ def initial_mesaje():
         print("--------------------------------------------------------")
         print("  WRONG SLECTION, MAKE YOUR CHOICE AGAIN: ")
         game_selected = input()
+        
     
 
     if game_selected == 1:
